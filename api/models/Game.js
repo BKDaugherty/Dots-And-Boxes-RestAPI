@@ -15,10 +15,10 @@ var GameSchema = new Schema({
   },
   Game_Board: {
     type: [{
-      type:[{
+      //type:[{
         type: String,
         enum: ['.', 'R', 'B']
-      }]
+      //}]
     }],
     required:"Game must have a board"
   },

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha",
-    "start": "node server.js"
+    "start": "mongod --dbpath='./db' & node server.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,7 @@
     "express": "^4.16.2",
     "mocha": "^4.0.1",
     "mochawesome": "^2.3.1",
-    "mongoose": "^4.12.3",
+    "mongoose": "4.10.8",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"
   }

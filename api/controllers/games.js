@@ -7,18 +7,30 @@ let Games = mongoose.model('Games')
 
 let getAllGames = function(req, res){
   //Return the ids of all public game
-  Games.find({})
-    .then(res.json)
-    .catch(res.send)
+  return Games.find({})
+    .then(foundList => {
+      res.send(foundList)})
+    .catch(err => {
+      res.send(err)
+    })
 }
 
 let createGame = function(req, res){
   //Create a game on the server, and return its id
-  let new_game = new Games (req.body)
+  console.log(req.body.Game_ID);
 
-  Games.save(new_game)
-    .then(res.json)
-    .catch(res.send)
+//Mongoose API isn't liking promises...
+  return Games.create({
+    "Game_ID":req.body.Game_ID,
+  }, function(err, GameCreated){
+    if(err) {
+      console.error(err)
+      res.send(err)
+    }
+    else {
+      console.log(GameCreated);
+    }
+  })
 }
 
 let getGameWithID = function(req, res){
@@ -45,12 +57,12 @@ let deleteGameWithID = function(req, res){
 
 //Get the status of the board at position boardX, boardY
 let getStatusOfBoardPos = function(req, res){
-  Games.findByID({req.params.gameID}).then(game => {
-    let board = game.Game_Board
-
-    //Check user inputs...
-    let piece = board[req.params.boardX][req.params.boardY]
-    return res.json(piece)
+  Games.findByID(req.params.gameID).then(game => {
+    // let board = game.Game_Board
+    //
+    // //Check user inputs...
+    // let piece = board[req.params.boardX][req.params.boardY]
+    return res.json("piece")
   })
     .catch(res.send)
 }

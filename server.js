@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-var routes = require('./api/routes/games.js'); //importing route
+let routes = require('./api/routes/games.js'); //importing route
 routes(app); //register the route
 
 //Start the server
