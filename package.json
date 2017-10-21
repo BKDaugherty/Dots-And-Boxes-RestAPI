@@ -1,0 +1,32 @@
+{
+  "name": "dots-and-boxes-restapi",
+  "version": "1.0.0",
+  "description": "Built for Unity Code test!",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BKDaugherty/Dots-And-Boxes-RestAPI.git"
+  },
+  "author": "Brendon Daugherty",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BKDaugherty/Dots-And-Boxes-RestAPI/issues"
+  },
+  "homepage": "https://github.com/BKDaugherty/Dots-And-Boxes-RestAPI#readme",
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "chai": "^4.1.2",
+    "express": "^4.16.2",
+    "mocha": "^4.0.1",
+    "mochawesome": "^2.3.1",
+    "mongoose": "^4.12.3",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
