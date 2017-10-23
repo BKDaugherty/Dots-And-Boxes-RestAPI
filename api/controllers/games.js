@@ -5,39 +5,112 @@ let Games = mongoose.model('Games')
 
 //TODO:Need to log all errors
 
+//Actual game logic helper functions
+const BOARD_SIZE = 4
+
+class Square {
+  //Default constructor
+  constructor(){
+    this.edgeBottom = "."
+    this.edgeRight = "."
+    this.edgeTop = "."
+    this.edgeLeft = "."
+    this.taken = 0
+    this.owner = "."
+  }
+  //Used for checking the squares we receive
+  //from the database
+  populateSquare(squareModel){
+    this.edgeBottom = squareModel.edgeBottom
+    this.edgeRight = squareModel.edgeRight
+    this.edgeTop = squareModel.edgeTop
+    this.edgeLeft = squareModel.edgeLeft
+    this.taken = 0
+    this.owner = squareModel.owner
+  }
+}
+
+//Creates the squares of the gamebaord
+let allocateGameBoard = function(size){
+  let gameBoard = []
+  //Game Board is a grid of (size - 1) squared grids
+  for(let i = 0; i < Math.pow(size-1, 2); i++){
+    gameBoard.push(new Square())
+  }
+  return gameBoard
+}
+
+//////////////////////////////////////
+
+//Server code
+
+let createSuccessObject = function(messageData){
+  return {
+    error:null,
+    code:"200",
+    data:messageData
+  }
+}
+//Error is a message
+let createFailure = function(code, error){
+  error
+  code
+}
+
 let getAllGames = function(req, res){
   //Return the ids of all public game
   return Games.find({})
     .then(foundList => {
-      res.send(foundList)})
+      res.json(createeSuccessObject(foundList))})
     .catch(err => {
       res.send(err)
     })
 }
 
+
 let createGame = function(req, res){
   //Create a game on the server, and return its id
-  console.log(req.body.Game_ID);
-
-//Mongoose API isn't liking promises...
-  return Games.create({
-    "Game_ID":req.body.Game_ID,
-  }, function(err, GameCreated){
+  return Games.create({"Game_Board":allocateGameBoard(BOARD_SIZE)}
+  , function(err, GameCreated){
     if(err) {
       console.error(err)
       res.send(err)
     }
     else {
-      console.log(GameCreated);
+      //Return the game's id to the user
+      //For querying
+      let messageData = {
+        "Game_ID":GameCreated._id,
+      }
+      res.json(createSuccessObject(messageData));
     }
   })
 }
 
 let getGameWithID = function(req, res){
   //Gets the information on the game with the specified id
-  Games.findById(req.params.gameID)
-    .then(res.json)
-    .catch(res.send)
+  Games.findById(req.params.gameID, function(err, data){
+    if(err) res.send(err)
+    else {
+
+      //Mongoose error handling doesn't throw on bad get?
+      //TODO:Need to send an error message here!
+      if(data === null){
+        res.send(err)
+        return
+      }
+
+      //I don't like the way Mongoose displays
+      //data, so we are overriding it here!
+      let message = {
+        Game_ID:data._id,
+        Game_Board:data.Game_Board,
+        Game_Status:data.Game_Status
+      }
+
+      res.json(createSuccessObject(message))
+    }
+  })
 }
 
 let updateGameWithID = function(req, res){
@@ -50,13 +123,15 @@ let updateGameWithID = function(req, res){
 
 //Deletes the game with the specified id
 let deleteGameWithID = function(req, res){
-  Games.remove({id:req.params.gameID})
-    .then(res.json)
-    .catch(res.send)
+  Games.remove({_id:req.params.gameID}, function(err, data){
+    if(err) res.send(err)
+    else res.json(createSuccessObject("Successfully deleted"))
+  })
+
 }
 
 //Get the status of the board at position boardX, boardY
-let getStatusOfBoardPos = function(req, res){
+let getStatusOfEdge = function(req, res){
   Games.findByID(req.params.gameID).then(game => {
     // let board = game.Game_Board
     //
@@ -68,7 +143,7 @@ let getStatusOfBoardPos = function(req, res){
 }
 
 //Places a dot at the board position specified on the game specified
-let placeDot = function(req, res){
+let placeEdge = function(req, res){
   //Use put somehow?
 }
 

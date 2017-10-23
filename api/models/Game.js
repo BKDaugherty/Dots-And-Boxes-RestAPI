@@ -2,38 +2,41 @@
 let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 
-var GameSchema = new Schema({
+let SquareSchema = new Schema({
+  numTaken:{
+    type:Number,
+    default:0
+  },
+  edgeBottom:{
+    type:String,
+    default:"."
+  },
+  edgeTop:{
+    type:String,
+    default:"."
+  },
+  edgeRight:{
+    type:String,
+    default:"."
+  },
+  edgeLeft:{
+    type:String,
+    default:"."
+  },
+  owner:{
+    type:String,
+    default:"."
+  }
+})
+
+let GameSchema = new Schema({
   Game_Status: {
     type: String,
     enum: ['Setup','In play', 'Finished'],
     default:'Setup',
     required:'Game_Status must exist'
   },
-  Game_ID: {
-    type: String,
-    required: 'The unique identifier must exist'
-  },
-  Game_Board: {
-    type: [{
-      //type:[{
-        type: String,
-        enum: ['.', 'R', 'B']
-      //}]
-    }],
-    required:"Game must have a board"
-  },
-  Game_Score: {
-    Red:{
-	type: Number,
-      required:"Red must have a score",
-      default:0
-    },
-    Black:{
-	type:Number,
-      required:"Black must have a score",
-      default:0
-    }
-  }
-})
+  Game_Board: [SquareSchema],
+  })
 
 module.exports = mongoose.model('Games', GameSchema)
