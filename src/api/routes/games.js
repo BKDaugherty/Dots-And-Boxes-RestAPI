@@ -11,9 +11,7 @@ module.exports = function(app){
     .put(Games.replaceGameWithID) //Updates the status of the game, for the game to start
     .delete(Games.deleteGameWithID) //Deletes the game from the database
 
-  app.route('/games/:gameID/board?')
-    .get(Games.getStatusOfEdge) //Check the status of a certain edge
-
   app.route('/games/:gameID/board')
-    .put(Games.placeEdge) //Place an edge on the board
+    .get(Games.getStatusOfEdge) //Check the status of a certain edge
+    .post(Games.placeEdge)
 }

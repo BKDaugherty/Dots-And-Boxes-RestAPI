@@ -7,7 +7,7 @@ const crypto = require('crypto')
 const gameLogic = require('../game/gameLogic')
 
 //To run end to end / behavioral tests we need to initialize the service first!
-describe('End to end tests for endpoints', function(){
+describe('Behavioral (End to End) Test Suite', function(){
   describe('/games', function(){
     describe('GET', function(){
       it("Should throw no error", function(){
@@ -33,7 +33,6 @@ describe('End to end tests for endpoints', function(){
 
           //Cache game_id for access later in cleanup
           game_id = messageJSON.data.Game_ID
-
         })
       })
 
@@ -101,21 +100,45 @@ describe('End to end tests for endpoints', function(){
         return dummyClient.deleteGameWithID(game_id)
       })
     })
-
     //No need to do environment cleanup here because of delete tests!
-
   })
-  
+
   describe('/games/:gameID/board', function(){
+    //Setup environment
+    let game_id
+    before(function(){
+      return dummyClient.createGame().then(message => {
+        game_id = JSON.parse(message).data.Game_ID
+      })
+    })
+
     describe('GET with query', function(){
       it("Should return with no errors", function(){
-
+        return dummyClient.checkEdge(game_id, {x:0, y:0}, {x:0, y:1})
+      })
+      it("Should return unclaimed", function(){
+        return dummyClient.checkEdge(game_id, {x:0, y:0}, {x:0, y:1}).then(message => {
+          const messageJSON = JSON.parse(message)
+          expect(messageJSON.data).to.be.ok
+          expect(messageJSON.data.taken).to.be.false
+          expect(messageJSON.data.owner).to.be.undefined
+        })
       })
     })
     describe('POST', function(){
-      it("Should add an edge to the board", function(){
-
+      it("Should return no errors", function(){
+        return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:0, y:1}, "R")
       })
+      it("Should add an edge to the board", function(){
+        return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:0, y:1}, "B").then(message => {
+          const messageJSON = JSON.parse(message)
+          console.log(messageJSON)
+        })
+      })
+    })
+    //Cleanup environment
+    after(function(){
+      return dummyClient.deleteGameWithID(game_id)
     })
   })
 })

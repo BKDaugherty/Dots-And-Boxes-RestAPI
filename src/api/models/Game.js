@@ -3,7 +3,11 @@ let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 
 let SquareSchema = new Schema({
-  numTaken:{
+  num:{
+    type:Number,
+    required:true
+  },
+  taken:{
     type:Number,
     default:0
   },

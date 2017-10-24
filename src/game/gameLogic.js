@@ -45,12 +45,10 @@ const allocateGameBoard = function(size){
 const checkEdge = function (gameBoard, coord1, coord2){
   if(checkValidityOfCoord(coord1) && checkValidityOfCoord(coord2) && checkValidityOfEdge(coord1, coord2)){
     const squares = findSquaresAssocWithEdge(gameBoard, coord1, coord2)
-
     //Doesnt matter which square we choose, as long as data is in consistent state!
     if(squares){
       return getEdgeInSquareData(squares[0], coord1, coord2)
     } else {
-      //Error!
       if(DEBUG_MODE)
         console.log("Unable to locate squares associated with edge... Returning null")
     }
@@ -99,20 +97,20 @@ const getEdgeInSquareData = function(square, coord1, coord2){
 
   const SD = getSquareDim(square)
 
-  if(coord1.x === coord2.x){
+  if(coord1.x == coord2.x){
     //Either left or right
-    if(coord1.x === SD.left){
+    if(coord1.x == SD.left){
       return square.edgeLeft
-    } else if (coord1.x === SD.right){
+    } else if (coord1.x == SD.right){
       return square.edgeRight
     } else {
       return null
     }
-  } else if(coord1.y === coord2.y){
+  } else if(coord1.y == coord2.y){
     //Either top or bottom
-    if(coord1.y === SD.top){
+    if(coord1.y == SD.top){
       return square.edgeTop
-    } else if(coord1.y === SD.bottom){
+    } else if(coord1.y == SD.bottom){
       return square.edgeBottom
     } else {
       return null
@@ -179,7 +177,7 @@ const placeEdge = function(gameBoard, coord1, coord2, color){
         updatedBoard.push(gameBoard[i])
       }
     }
-    
+
     return updatedBoard
   } else {
     if(DEBUG_MODE)

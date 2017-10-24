@@ -71,7 +71,6 @@ const replaceGameWithID = function(req, res){
     .then(gameCreated => {
       if(DEBUG_MODE)
         console.log("Successful update on id: " + gameCreated._id)
-      console.log(gameCreated)
 
       const messageData = {
         "Game_ID":gameCreated._id,
@@ -107,8 +106,10 @@ const getStatusOfEdge = function(req, res){
       y:req.query.y2
     }
 
+    console.log(game)
+
     //Returns the owner of the edge
-    const edgeData = gameLogic.checkEdge(game.Game_Board)
+    const edgeData = gameLogic.checkEdge(game.Game_Board, coordFrom, coordTo)
 
     //If the edge specified is invalid, then we need to return an error
     if(edgeData){
@@ -119,9 +120,13 @@ const getStatusOfEdge = function(req, res){
       res.status(200).json(util.createSuccessObject(message))
     } else {
       //Log error!
+      console.log("error!")
+      res.send("Could not find the specified edge")
 
     }
-  }).catch(res.send)
+  }).catch(err => {
+    console.log(err)
+  })
 }
 
 //Places a dot at the board position specified on the game specified
@@ -140,15 +145,17 @@ const placeEdge = function(req, res){
       const oldBoard = game.Game_Board
       const newBoard = gameLogic.placeEdge(oldBoard, coord1, coord2, color)
 
-      game.Game_Board = newBoard
-      game.save().then(() => {
-        if(DEBUG_MODE)
-          console.log("Successfully placed edge")
-        res.sendStatus(201)
-      }).catch(err => {
-        console.log(err)
-      })
+      console.log(oldBoard)
+      console.log(newBoard)
 
+      game.Game_Board = newBoard
+
+      game.save(function(err, data){
+        if(err) console.log("error")//console.log(err)
+        else {
+          res.status(201).json(util.createSuccessObject({message:"Edge created"}, "201 Created"))
+        }
+      })
 
     }
   })

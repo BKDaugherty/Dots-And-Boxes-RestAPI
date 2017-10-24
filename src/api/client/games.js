@@ -22,7 +22,6 @@ const getGameWithID = function(gameID){
 }
 
 const replaceGameWithID = function(gameID, game){
-  console.log(gameID)
   return request.put({url:baseURL + `/games/${gameID}`, json:game})
 }
 
@@ -31,7 +30,7 @@ const deleteGameWithID = function(gameID){
 }
 
 const checkEdge = function(gameID, coord1, coord2){
-  return request.get(baseURL + `/games/${gameID}/board?x1=${coord1.x1}&x2=${coord2.x2}&y1=${coord1.y1}&y2=${coord2.y2}`)
+  return request.get(baseURL + `/games/${gameID}/board?x1=${coord1.x}&x2=${coord2.x}&y1=${coord1.y}&y2=${coord2.y}`)
 }
 
 const placeEdge = function(gameID, coord1, coord2, color){
@@ -45,7 +44,6 @@ const placeEdge = function(gameID, coord1, coord2, color){
 
   return request.post({url:baseURL + `/games/${gameID}/board`, json:requestBody})
 }
-
 module.exports = {
   getGames,
   createGame,
