@@ -49,6 +49,7 @@ is represented as an array of Squares. Each Square is defined in the following f
 
 #### Game Board
 The Game Board is an array of 9 Squares, where each square takes the following data format.
+
 | Name        | Description           
 | ----------- |:-------------
 | num         | The number of the square on the board. Numbered from left to right, top to bottom. (0-8)
