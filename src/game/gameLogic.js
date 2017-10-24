@@ -179,12 +179,7 @@ const placeEdge = function(gameBoard, coord1, coord2, color){
         updatedBoard.push(gameBoard[i])
       }
     }
-
-    console.log(updatedBoard)
-
-    if(DEBUG_MODE)
-      console.log("Updated board")
-
+    
     return updatedBoard
   } else {
     if(DEBUG_MODE)

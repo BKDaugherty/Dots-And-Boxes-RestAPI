@@ -22,7 +22,8 @@ const getGameWithID = function(gameID){
 }
 
 const replaceGameWithID = function(gameID, game){
-  return request.put(baseURL + `/games/${gameID}`)
+  console.log(gameID)
+  return request.put({url:baseURL + `/games/${gameID}`, json:game})
 }
 
 const deleteGameWithID = function(gameID){

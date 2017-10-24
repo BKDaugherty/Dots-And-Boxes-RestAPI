@@ -67,16 +67,26 @@ const getGameWithID = function(req, res){
 }
 
 const replaceGameWithID = function(req, res){
-  //Updates the status of the game.
-  //This is used to start the game, or maybe if we were matchmaking,
-  //we could use this to switch which player's turn it is, and only
-  //allow a player with that id to move
+  return Games.create({_id:req.params.gameID, Game_Board:req.body.Game_Board})
+    .then(gameCreated => {
+      if(DEBUG_MODE)
+        console.log("Successful update on id: " + gameCreated._id)
+      console.log(gameCreated)
+
+      const messageData = {
+        "Game_ID":gameCreated._id,
+      }
+
+      res.status(201).json(createSuccessObject(messageData, "201 Created"))
+    }).catch(err => {
+      res.send(err)
+    })
 
 }
 
 //Deletes the game with the specified id
 const deleteGameWithID = function(req, res){
-  Games.remove({_id:req.params.gameID}, function(err, data){
+  return Games.remove({_id:req.params.gameID}, function(err, data){
     if(err) res.send(err)
     else res.sendStatus(204)
   })
@@ -85,7 +95,7 @@ const deleteGameWithID = function(req, res){
 
 //Get the status of the board at position boardX, boardY
 const getStatusOfEdge = function(req, res){
-  Games.findById(req.params.gameID).then(game => {
+  return Games.findById(req.params.gameID).then(game => {
 
     const coordFrom = {
       x:req.query.x1,
@@ -120,7 +130,7 @@ const placeEdge = function(req, res){
   const coord2 = {x:req.body.x2, y:req.body.y2}
   const color = req.body.color
 
-  Games.findById(req.params.gameID).then(game => {
+  return Games.findById(req.params.gameID).then(game => {
     if(game === null){
       if(DEBUG_MODE)
         console.log("Attempt to place edge on invalid game")

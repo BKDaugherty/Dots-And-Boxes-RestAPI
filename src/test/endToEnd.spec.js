@@ -3,6 +3,8 @@
 const expect = require('chai').expect
 const mocha = require('mocha')
 const dummyClient = require('../api/client/games')
+const crypto = require('crypto')
+const gameLogic = require('../game/gameLogic')
 
 //To run end to end / behavioral tests we need to initialize the service first!
 describe('End to end tests for endpoints', function(){
@@ -31,6 +33,7 @@ describe('End to end tests for endpoints', function(){
 
           //Cache game_id for access later in cleanup
           game_id = messageJSON.data.Game_ID
+
         })
       })
 
@@ -65,21 +68,54 @@ describe('End to end tests for endpoints', function(){
         })
       })
     })
+
     describe('PUT', function(){
+      //Used to cache the game ids for deletion
+      let game_id1, game_id2
+      it("Should return with no errors", function(){
+        const game_id = crypto.randomBytes(12).toString('hex')
+        const replacementGame = {
+          Game_Board:gameLogic.allocateGameBoard(4)
+        }
+        game_id1 = game_id
+        return dummyClient.replaceGameWithID(game_id, replacementGame)
+      })
+      it("Should place a game at requested id that is queryable", function(){
+        const replacementGameID = crypto.randomBytes(12).toString('hex')
+        const replacementGame = {
+          Game_Board:gameLogic.allocateGameBoard(4),
+        }
+        game_id2 = replacementGameID
+        return dummyClient.replaceGameWithID(replacementGameID, replacementGame).then( response => {
+          return replacementGameID
+        }).then(dummyClient.getGameWithID).then(message => {
+          expect(JSON.parse(message).data.Game_ID).to.equal(replacementGameID)
+        })
+      })
+      after(function(){
+        return Promise.all([dummyClient.deleteGameWithID(game_id1), dummyClient.deleteGameWithID(game_id2)])
+      })
+    })
+    describe('DELETE', function(){
+      it("Should return with no errors", function(){
+        return dummyClient.deleteGameWithID(game_id)
+      })
+    })
+
+    //No need to do environment cleanup here because of delete tests!
+
+  })
+  
+  describe('/games/:gameID/board', function(){
+    describe('GET with query', function(){
       it("Should return with no errors", function(){
 
       })
     })
-    describe('DELETE', function(){
+    describe('POST', function(){
+      it("Should add an edge to the board", function(){
 
-    })
-  })
-  describe('/games/:gameID/:boardX/:boardY', function(){
-    describe('GET', function(){
-
-    })
-    describe('PUT', function(){
-
+      })
     })
   })
 })
