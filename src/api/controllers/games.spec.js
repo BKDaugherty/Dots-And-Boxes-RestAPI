@@ -1,5 +1,5 @@
 //Tests for games file
-let Games = require('./games.js')
+//let Games = require('./games.js')
 let expect = require('chai').expect
 let mocha = require('mocha')
 
@@ -11,7 +11,8 @@ describe('Unit Tests for Games Module', function(){
   })
 
   describe("Test createGame", function(){
-
+    it("Should do stuff", function(){
+    })
   })
 
   describe("Test getGameWithID", function(){

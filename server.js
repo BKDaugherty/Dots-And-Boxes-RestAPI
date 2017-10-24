@@ -2,7 +2,7 @@
 let express = require('express'), app = express(), port = process.env.port || 7846
 
 mongoose = require('mongoose'),
-  Games = require('./api/models/Game.js'), //created model loading here
+  Games = require('./src/api/models/Game.js'), //created model loading here
   bodyParser = require('body-parser');
 
 //Set up mongoose!
@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-let routes = require('./api/routes/games.js'); //importing route
+let routes = require('./src/api/routes/games.js'); //importing route
 routes(app); //register the route
 
 //Start the server

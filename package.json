@@ -4,7 +4,7 @@
   "description": "Built for Unity Code test!",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
+    "test": "./node_modules/mocha/bin/mocha 'src/**/*.spec.js' --reporter mochawesome --reporter-options reportDir=./reports,reportFilename=DotsAndBoxesTestReport",
     "start": "mongod --dbpath='./db' & node server.js"
   },
   "repository": {

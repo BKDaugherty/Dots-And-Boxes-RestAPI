@@ -1,5 +1,5 @@
 //Import the game module
-let Games = require('../controllers/games.js');
+const Games = require('../controllers/games.js');
 
 module.exports = function(app){
   app.route('/games')
@@ -11,7 +11,9 @@ module.exports = function(app){
     .put(Games.updateGameWithID) //Updates the status of the game, for the game to start
     .delete(Games.deleteGameWithID) //Deletes the game from the database
 
-  app.route('/games/:gameID/:boardX/:boardY')
-    .get(Games.getStatusOfBoardPos) //Check the status of a certain position
-    .put(Games.placeDot) //Place a piece on the board
+  app.route('/games/:gameID/board?')
+    .get(Games.getStatusOfEdge) //Check the status of a certain position
+
+  app.route('/games/:gameID/board')
+    .put(Games.placeEdge) //Place a piece on the board
 }
