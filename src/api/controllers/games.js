@@ -1,16 +1,29 @@
+//src/api/controllers/games.js
 //Controllers for the API input and ouptut
-const mongoose = require('mongoose')
-const gameLogic = require('../../game/gameLogic')
-const util = require('./utility')
-const Games = mongoose.model('Games')
 
+/////////////CONSTANTS AND REQUIREMENTS/////////////
+
+//Mongoose is used for interfacing with MongoDB
+const mongoose = require('mongoose')
+const Games = mongoose.model('Games')   //Model for Game data structure
+
+//Used to access code specific to the game, that will be shared between
+//client and server for consistency in states.
+const gameLogic = require('../../game/gameLogic')
+
+//Used for utility functions that are better housed in another file
+const util = require('./utility')
+
+//Keeping board sizes constant for simplicity's sake.
 const BOARD_SIZE = 4
 
-//TODO:Need to log all errors
-const DEBUG_MODE = process.env.DEBUG_MODE || true //Debug mode can be set by environment variable
+//Set this environment variable to log messages to the console
+const LOG_MODE = process.env.LOG_MODE
+///////////////////////////////////////////////////////////////
 
+
+//Return the structure for all public games on the server
 const getAllGames = function(req, res){
-  //Return the ids of all public game
   return Games.find({})
     .then(foundList => {
       res.json(util.createSuccessObject(foundList, "200 OK"))})
@@ -19,18 +32,21 @@ const getAllGames = function(req, res){
     })
 }
 
-
+//Create a game on the server, and return its id
 const createGame = function(req, res){
-  //Create a game on the server, and return its id
   return Games.create({"Game_Board":gameLogic.allocateGameBoard(BOARD_SIZE)}
   , function(err, GameCreated){
     if(err) {
-      console.error(err)
+      if(LOG_MODE)
+        console.error(err)
       res.send(err)
     }
     else {
+
       //Return the game's id to the user
-      //For querying
+      if(LOG_MODE)
+        console.log("Game Created with ID:" + GameCreated._id)
+
       const messageData = {
         "Game_ID":GameCreated._id,
       }
@@ -39,22 +55,23 @@ const createGame = function(req, res){
   })
 }
 
+//Gets the information on the game with the specified id
 const getGameWithID = function(req, res){
-  //Gets the information on the game with the specified id
   Games.findById(req.params.gameID, function(err, data){
     if(err) res.send(err)
     else {
 
-      //Mongoose error handling doesn't throw on bad get?
-      //TODO:Need to send an error message here!
+      //Mongoose does not throw an error if find
+      //finds nothing, as it is a query. Need to do
+      //our own error handling
       if(data === null){
+        if(LOG_MODE)
+          console.log("Invalid id: " + req.params.gameID)
         res.send(err)
         return
       }
 
-      //I don't like the way mongoose displays
-      //data, so we are overriding it here!
-
+      //Override Mongoose display of data for cleaner output
       const message = {
         Game_ID:data._id,
         Game_Board:data.Game_Board,
@@ -66,10 +83,14 @@ const getGameWithID = function(req, res){
   })
 }
 
+//Put request as defined in RFC should replace whatever content is housed
+//in specified id. In a larger application we might think that this is
+//a security issue, as someone could replace your game; however, in this
+//application we are not worried about such issues.
 const replaceGameWithID = function(req, res){
   return Games.create({_id:req.params.gameID, Game_Board:req.body.Game_Board})
     .then(gameCreated => {
-      if(DEBUG_MODE)
+      if(LOG_MODE)
         console.log("Successful update on id: " + gameCreated._id)
 
       const messageData = {
@@ -87,7 +108,11 @@ const replaceGameWithID = function(req, res){
 const deleteGameWithID = function(req, res){
   return Games.remove({_id:req.params.gameID}, function(err, data){
     if(err) res.send(err)
-    else res.sendStatus(204)
+    else {
+      if(LOG_MODE)
+        console.log("Game with id " + req.params.gameID + " was successfully deleted.")
+      res.sendStatus(204)
+    }
   })
 
 }
@@ -106,8 +131,6 @@ const getStatusOfEdge = function(req, res){
       y:req.query.y2
     }
 
-    console.log(game)
-
     //Returns the owner of the edge
     const edgeData = gameLogic.checkEdge(game.Game_Board, coordFrom, coordTo)
 
@@ -117,10 +140,15 @@ const getStatusOfEdge = function(req, res){
         taken: (edgeData !== "."),
         edgeOwner: (edgeData === ".") ? null : edgeData
       }
+
+      if(LOG_MODE)
+        console.log(`Edge: ((${coordFrom.x},${coordFrom.y}), (${coordTo.x}, ${coordTo.y}) is found to have edge data ${edgeData}`)
+
       res.status(200).json(util.createSuccessObject(message))
     } else {
       //Log error!
-      console.log("error!")
+      if(LOG_MODE)
+        console.log(`Unable to find the requested edge: ((${coordFrom.x},${coordFrom.y}), (${coordTo.x}, ${coordTo.y})`)
       res.send("Could not find the specified edge")
 
     }
@@ -137,31 +165,26 @@ const placeEdge = function(req, res){
 
   return Games.findById(req.params.gameID).then(game => {
     if(game === null){
-      if(DEBUG_MODE)
-        console.log("Attempt to place edge on invalid game")
-      //ERROR HERE
+      if(LOG_MODE)
+        console.log("Unable to find game with" + req.params.gameID)
+      return res.send("ERROR")
     } else {
-      //
-      const oldBoard = game.Game_Board
-      const newBoard = gameLogic.placeEdge(oldBoard, coord1, coord2, color)
 
-      console.log(oldBoard)
-      console.log(newBoard)
-
-      game.Game_Board = newBoard
-
-      game.save(function(err, data){
-        if(err) console.log("error")//console.log(err)
-        else {
-          res.status(201).json(util.createSuccessObject({message:"Edge created"}, "201 Created"))
-        }
+      const newBoard = gameLogic.placeEdge(game.Game_Board, coord1, coord2, color)
+      return Games.update({_id:req.params.gameID}, {Game_Board:newBoard})
+      .then(data => {
+        if(LOG_MODE)
+          console.log(`Successful edge placement by ${color} on ${game._id} on ((${coordFrom.x},${coordFrom.y}), (${coordTo.x}, ${coordTo.y})`)
+        return res.status(201).json(util.createSuccessObject({message:"Edge created"}, "201 Created"))
       })
-
+      .catch(err => {
+        if(LOG_MODE)
+          console.log("Unable to save the updated GameBoard")//console.log(err)
+        return res.send(err)
+      })
     }
-  })
-
-
-}
+    })
+  }
 
 
 module.exports =

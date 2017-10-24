@@ -5,7 +5,7 @@ let Schema = mongoose.Schema
 let SquareSchema = new Schema({
   num:{
     type:Number,
-    required:true
+    required:"Num of square is a required field"
   },
   taken:{
     type:Number,

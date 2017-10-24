@@ -131,6 +131,7 @@ describe('Behavioral (End to End) Test Suite', function(){
       })
       it("Should add an edge to the board", function(){
         return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:0, y:1}, "B").then(message => {
+          console.log(message)
           const messageJSON = JSON.parse(message)
           console.log(messageJSON)
         })
