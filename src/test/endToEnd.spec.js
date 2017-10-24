@@ -126,7 +126,7 @@ describe('Behavioral (End to End) Test Suite', function(){
       })
     })
     describe('POST', function(){
-      it("Should return no errors", function(){
+      it.skip("Should return no errors", function(){
         return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:0, y:1}, "R")
       })
       it("Should add an edge to the board", function(){
