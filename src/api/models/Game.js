@@ -30,12 +30,6 @@ let SquareSchema = new Schema({
 })
 
 let GameSchema = new Schema({
-  Game_Status: {
-    type: String,
-    enum: ['Setup','In play', 'Finished'],
-    default:'Setup',
-    required:'Game_Status must exist'
-  },
   Game_Board: [SquareSchema],
   })
 

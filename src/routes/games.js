@@ -8,10 +8,10 @@ module.exports = function(app){
 
   app.route('/games/:gameID')
     .get(Games.getGameWithID) //Returns the state of the game, and the score
-    .put(Games.updateGameWithID) //Updates the status of the game, for the game to start
+    .put(Games.replaceGameWithID) //Requests that the server place the given game board at the URI
     .delete(Games.deleteGameWithID) //Deletes the game from the database
 
   app.route('/games/:gameID/:boardX/:boardY')
     .get(Games.getStatusOfBoardPos) //Check the status of a certain position
-    .put(Games.placeDot) //Place a piece on the board
+    .post(Games.placeEdge) //Place a piece on the board
 }

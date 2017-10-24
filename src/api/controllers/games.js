@@ -13,7 +13,7 @@ const getAllGames = function(req, res){
   //Return the ids of all public game
   return Games.find({})
     .then(foundList => {
-      res.json(util.createSuccessObject(foundList))})
+      res.json(util.createSuccessObject(foundList, "200 OK"))})
     .catch(err => {
       res.send(err)
     })
@@ -34,7 +34,7 @@ const createGame = function(req, res){
       const messageData = {
         "Game_ID":GameCreated._id,
       }
-      res.json(util.createSuccessObject(messageData));
+      res.json(util.createSuccessObject(messageData, "201 Created"));
     }
   })
 }
@@ -61,12 +61,12 @@ const getGameWithID = function(req, res){
         Game_Status:data.Game_Status
       }
 
-      res.json(util.createSuccessObject(message))
+      res.status(200).json(util.createSuccessObject(message, "200 OK"))
     }
   })
 }
 
-const updateGameWithID = function(req, res){
+const replaceGameWithID = function(req, res){
   //Updates the status of the game.
   //This is used to start the game, or maybe if we were matchmaking,
   //we could use this to switch which player's turn it is, and only
@@ -78,7 +78,7 @@ const updateGameWithID = function(req, res){
 const deleteGameWithID = function(req, res){
   Games.remove({_id:req.params.gameID}, function(err, data){
     if(err) res.send(err)
-    else res.json(util.createSuccessObject("Successfully deleted"))
+    else res.sendStatus(204)
   })
 
 }
@@ -106,13 +106,12 @@ const getStatusOfEdge = function(req, res){
         taken: (edgeData !== "."),
         edgeOwner: (edgeData === ".") ? null : edgeData
       }
-      res.json(util.createSuccessObject())
+      res.status(200).json(util.createSuccessObject(message))
     } else {
       //Log error!
 
     }
-  })
-    .catch(res.send)
+  }).catch(res.send)
 }
 
 //Places a dot at the board position specified on the game specified
@@ -135,6 +134,7 @@ const placeEdge = function(req, res){
       game.save().then(() => {
         if(DEBUG_MODE)
           console.log("Successfully placed edge")
+        res.sendStatus(201)
       }).catch(err => {
         console.log(err)
       })
@@ -152,7 +152,7 @@ module.exports =
     getAllGames,
     createGame,
     getGameWithID,
-    updateGameWithID,
+    replaceGameWithID,
     deleteGameWithID,
     getStatusOfEdge,
     placeEdge

@@ -1,9 +1,8 @@
-//Utility functions for encapsulating messages
-
-const createSuccessObject = function(messageData){
+//Utility functions for encapsulating messages back from the server
+const createSuccessObject = function(messageData, code){
   return {
     error:null,
-    code:"200",
+    code:code,
     data:messageData
   }
 }

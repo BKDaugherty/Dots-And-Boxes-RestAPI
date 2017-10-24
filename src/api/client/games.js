@@ -5,8 +5,8 @@
 
 //Used for HTTP requests
 const request = require('request-promise')
-const port = process.env.port || 7438
-const baseURL = "localhost:" + port.toString()
+const port = process.env.port || 7846
+const baseURL = "http://localhost:" + port.toString()
 
 const getGames = function(){
   return request.get(baseURL + '/games')
@@ -17,31 +17,39 @@ const createGame = function(){
 }
 
 const getGameWithID = function(gameID){
-  return request.get(baseURL + '/games/' + gameID.toString())
+  return request.get(baseURL + `/games/${gameID}`)
 
 }
 
-const updateGameWithID = function(gameID, gameStatus){
-  return request.put(baseURL)
+const replaceGameWithID = function(gameID, game){
+  return request.put(baseURL + `/games/${gameID}`)
 }
 
 const deleteGameWithID = function(gameID){
-  return request.delete(baseURL)
+  return request.delete(baseURL + `/games/${gameID}`)
 }
 
 const checkEdge = function(gameID, coord1, coord2){
-  return request.get(baseURL + '/games/' + gameID.toString() + `/x1=${coord1.x1}&x2=${coord2.x2}&y1=${coord1.y1}&y2=${coord2.y2}`)
+  return request.get(baseURL + `/games/${gameID}/board?x1=${coord1.x1}&x2=${coord2.x2}&y1=${coord1.y1}&y2=${coord2.y2}`)
 }
 
 const placeEdge = function(gameID, coord1, coord2, color){
-  return request.put(baseURL)
+  const requestBody = {
+    x1:coord1.x,
+    y1:coord1.y,
+    x2:coord2.x,
+    y2:coord2.y,
+    color:color
+  }
+
+  return request.post({url:baseURL + `/games/${gameID}/board`, json:requestBody})
 }
 
 module.exports = {
   getGames,
   createGame,
   getGameWithID,
-  updateGameWithID,
+  replaceGameWithID,
   deleteGameWithID,
   checkEdge,
   placeEdge,
