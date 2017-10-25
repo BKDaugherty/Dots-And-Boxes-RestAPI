@@ -1,6 +1,6 @@
 ////////////Game Constants/////////
 const BOARD_SIZE = 4
-const DEBUG_MODE = process.env.DEBUG_MODE || true
+const LOG_MODE = process.env.LOG_MODE
 
 ///////////Game Objects////////////
 class Square {
@@ -13,6 +13,7 @@ class Square {
     this.edgeLeft = "."
     this.taken = 0
     this.owner = "."
+    return this
   }
   //Used for checking the squares we receive
   //from the database
@@ -24,6 +25,7 @@ class Square {
     this.edgeLeft = otherSquare.edgeLeft
     this.taken = otherSquare.taken
     this.owner = otherSquare.owner
+    return this
   }
 }
 
@@ -36,7 +38,7 @@ const allocateGameBoard = function(size){
     gameBoard.push(new Square(i))
   }
 
-  if(DEBUG_MODE)
+  if(LOG_MODE)
     console.log("Creating board of size " + size)
 
   return gameBoard
@@ -49,11 +51,11 @@ const checkEdge = function (gameBoard, coord1, coord2){
     if(squares){
       return getEdgeInSquareData(squares[0], coord1, coord2)
     } else {
-      if(DEBUG_MODE)
+      if(LOG_MODE)
         console.log("Unable to locate squares associated with edge... Returning null")
     }
   } else {
-    if(DEBUG_MODE)
+    if(LOG_MODE)
       console.log("Edge is invalid... returning null")
     return null
   }
@@ -160,6 +162,7 @@ const isInSquareList = function(list, squareNum){
 
 //Returns an updated gameboard
 const placeEdge = function(gameBoard, coord1, coord2, color){
+
   if(checkValidityOfEdge(coord1, coord2) && checkValidityOfCoord(coord1) && checkValidityOfCoord(coord2) && checkValidityOfColor(color)){
     const squares = findSquaresAssocWithEdge(gameBoard, coord1, coord2)
 
@@ -170,17 +173,19 @@ const placeEdge = function(gameBoard, coord1, coord2, color){
 
     //Build the updated board
     let updatedBoard = []
-    for(let i in gameBoard){
+    for(let i = 0; i < gameBoard.length; i++){
       if(isInSquareList(updatedSquares, i)){
-        updatedBoard.push(updatedSquares[i])
+        const squareToAdd = new Square(i).populateSquare(updatedSquares[i])
+        updatedBoard.push(squareToAdd)
       } else {
-        updatedBoard.push(gameBoard[i])
+        const squareToAdd = new Square(i).populateSquare(gameBoard[i])
+        updatedBoard.push(squareToAdd)
       }
     }
 
     return updatedBoard
   } else {
-    if(DEBUG_MODE)
+    if(LOG_MODE)
       console.log("Invalid input to place edge... returning null")
     return null
   }

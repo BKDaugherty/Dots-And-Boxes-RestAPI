@@ -19,6 +19,19 @@ describe("Game Logic Testing", function(){
     })
   })
 
+  describe("Square Class", function(){
+    it("Should allocate a square", function(){
+      const square = new gameLogic.Square(1)
+    })
+    it("Should populate the square", function(){
+      let square1 = new gameLogic.Square(1)
+      square1.edgeRight = "HelloWorld"
+      console.log("RET value")
+      console.log(new gameLogic.Square().populateSquare(square1))
+      console.log("SQUARE VALUE")
+    })
+  })
+
   describe("Update edge", function(){
     it("Edge should be updated", function(){
       const board = gameLogic.allocateGameBoard(4)

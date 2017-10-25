@@ -92,6 +92,10 @@ the root directory. This will install the JavaScript packages that are required.
 My API also uses MongoDB, so if you haven't installed that, you can go here
 https://docs.mongodb.com/manual/installation/ to get the latest installation.
 
+In my npm scripts, I have assumed that the user will be using a UNIX type operating
+system, and have routed the DB output to '/dev/null'. I have also utilized the
+environment variable syntax from bash scripting. These scripts will not run on Windows.
+
 ### Starting the service
 To start the service, you can use 'npm run start', which will launch the REST API
 on port 7846. You can also specify the environment variable PORT to run it on a
@@ -117,3 +121,28 @@ This project relies on the following packages.
 * Mongoose --> For DB operations with MongoDB.
 * Request --> Used as a backbone for Request-Promise.
 * Request-Promise --> Used for end to end testing.
+
+## Next Steps
+Although this is indeed a REST API, there are plenty of features missing from
+a fully scalable REST API. Because this project is built in a small window of time
+there are a few key features that I will list here that should be included; however
+I did not have time to get to them. This also will act as a TODO list!
+* Security
+  * Authorization
+  Some form of authorization should be required to use the REST API. Currently,
+  any user can access the API and delete someone else's game out from under them.
+  If we added something such as OAUTH2 authorization, and required each request
+  to pass a session token, we could limit this form of security.
+  * Cryptography
+  Again, in this case our information does not really need to be secure; however, it
+  would be a good idea to add some form of cryptography to our API, whether that be in
+  the world of a JWT, or using a HTTPS/TLS connection.
+* Continuous Integration
+Projects are better with continuous integration, and a fully functioning pipeline.
+With big projects, continuous integration is absolutely essential. As projects grow,
+sometimes new features break old ones. Its important to realize this instantly in the
+development cycle, and solve the problem to avoid code regression.
+
+## TODO
+* Sanitize input
+* Negative Tests

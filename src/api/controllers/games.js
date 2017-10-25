@@ -21,13 +21,16 @@ const BOARD_SIZE = 4
 const LOG_MODE = process.env.LOG_MODE
 ///////////////////////////////////////////////////////////////
 
-
 //Return the structure for all public games on the server
 const getAllGames = function(req, res){
   return Games.find({})
     .then(foundList => {
+      if(LOG_MODE)
+        console.log("Access to all games successful")
       res.json(util.createSuccessObject(foundList, "200 OK"))})
     .catch(err => {
+      if(LOG_MODE)
+        console.log("Unable to find games")
       res.send(err)
     })
 }
@@ -58,9 +61,12 @@ const createGame = function(req, res){
 //Gets the information on the game with the specified id
 const getGameWithID = function(req, res){
   Games.findById(req.params.gameID, function(err, data){
-    if(err) res.send(err)
+    if(err) {
+      if(LOG_MODE)
+        console.log(`Something went wrong with the database connection for getGameWithID${req.params.gameID})`)
+      res.send(err)
+    }
     else {
-
       //Mongoose does not throw an error if find
       //finds nothing, as it is a query. Need to do
       //our own error handling
@@ -77,6 +83,9 @@ const getGameWithID = function(req, res){
         Game_Board:data.Game_Board,
         Game_Status:data.Game_Status
       }
+
+      if(LOG_MODE)
+        console.log("Access to game" + req.params.gameID + "successful")
 
       res.status(200).json(util.createSuccessObject(message, "200 OK"))
     }
@@ -97,9 +106,10 @@ const replaceGameWithID = function(req, res){
         "Game_ID":gameCreated._id,
       }
 
-      res.status(201).json(createSuccessObject(messageData, "201 Created"))
+      res.status(201).json(util.createSuccessObject(messageData, "201 Created"))
     }).catch(err => {
-      res.send(err)
+
+      res.status(400).send("Unable to create game" + err)
     })
 
 }
@@ -149,11 +159,13 @@ const getStatusOfEdge = function(req, res){
       //Log error!
       if(LOG_MODE)
         console.log(`Unable to find the requested edge: ((${coordFrom.x},${coordFrom.y}), (${coordTo.x}, ${coordTo.y})`)
-      res.send("Could not find the specified edge")
+      res.status(400).send("Could not find the specified edge")
 
     }
   }).catch(err => {
-    console.log(err)
+    if(LOG_MODE)
+      console.log("Caught error in getStatusOfEdge", err)
+    res.status(400).send(err)
   })
 }
 
@@ -167,21 +179,30 @@ const placeEdge = function(req, res){
     if(game === null){
       if(LOG_MODE)
         console.log("Unable to find game with" + req.params.gameID)
-      return res.send("ERROR")
+      return res.status(400).send("ERROR")
     } else {
 
+
       const newBoard = gameLogic.placeEdge(game.Game_Board, coord1, coord2, color)
-      return Games.update({_id:req.params.gameID}, {Game_Board:newBoard})
-      .then(data => {
+
+      if(newBoard){
+
+        return Games.update({_id:req.params.gameID}, {$set: {Game_Board:newBoard}})
+        .then(data => {
+          if(LOG_MODE)
+            console.log(`Successful edge placement by ${color} on ${game._id} on ((${coord1.x},${coord1.y}), (${coord2.x}, ${coord2.y})`)
+          return res.status(201).json(util.createSuccessObject({message:"Edge created"}, "201 Created"))
+        })
+        .catch(err => {
+          if(LOG_MODE)
+            console.log("Unable to save the updated GameBoard")//console.log(err)
+          return res.status(400).send(err)
+        })
+      } else {
         if(LOG_MODE)
-          console.log(`Successful edge placement by ${color} on ${game._id} on ((${coordFrom.x},${coordFrom.y}), (${coordTo.x}, ${coordTo.y})`)
-        return res.status(201).json(util.createSuccessObject({message:"Edge created"}, "201 Created"))
-      })
-      .catch(err => {
-        if(LOG_MODE)
-          console.log("Unable to save the updated GameBoard")//console.log(err)
-        return res.send(err)
-      })
+          console.log("Unbale to construct modified board")
+        return res.status(400).send("Unable to create modified board")
+      }
     }
     })
   }

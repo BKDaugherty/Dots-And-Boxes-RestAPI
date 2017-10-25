@@ -121,19 +121,26 @@ describe('Behavioral (End to End) Test Suite', function(){
           const messageJSON = JSON.parse(message)
           expect(messageJSON.data).to.be.ok
           expect(messageJSON.data.taken).to.be.false
-          expect(messageJSON.data.owner).to.be.undefined
+          expect(messageJSON.data.edgeOwner).to.be.null
         })
       })
     })
     describe('POST', function(){
-      it.skip("Should return no errors", function(){
+      it("Should return no errors", function(){
         return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:0, y:1}, "R")
       })
       it("Should add an edge to the board", function(){
-        return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:0, y:1}, "B").then(message => {
-          console.log(message)
+        return dummyClient.placeEdge(game_id, {x:0, y:0}, {x:1, y:0}, "B")
+          .then(message => {
+          expect(message.code).to.equal("201 Created")
+        })
+        .then(() => {
+          return dummyClient.checkEdge(game_id, {x:0, y:0}, {x:1, y:0})
+        }).then(message => {
           const messageJSON = JSON.parse(message)
-          console.log(messageJSON)
+          expect(messageJSON.data).to.be.ok
+          expect(messageJSON.data.taken).to.be.true
+          expect(messageJSON.data.edgeOwner).to.equal("B")
         })
       })
     })

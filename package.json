@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha 'src/**/*.spec.js' --reporter mochawesome --reporter-options reportDir=./reports,reportFilename=DotsAndBoxesTestReport",
-    "start": "mongod --dbpath='./db' & node server.js"
+    "start": "mongod --dbpath='./db' >/dev/null & LOG_MODE=true node server.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "chai": "^4.1.2",
-    "deepmerge": "^2.0.0",
     "express": "^4.16.2",
     "mocha": "^4.0.1",
     "mochawesome": "^2.3.1",
