@@ -157,38 +157,80 @@ describe('Behavioral / Unit Test Suite', function(){
   //If I had more time, I would extensively test each
   //function to ensure that the API can handle many
   //different forms of bad input!
-
   describe("Negative Tests", function(){
-    describe('/games', function(){
-
     describe('/games/:gameID', function(){
       describe('GET', function(){
         describe("Attempt to get invalid gameID", function(){
-
+          it("Should return an error with status code 404", function(){
+            return dummyClient.getGameWithID(5).catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
         describe("Attempt to get deleted gameID", function(){
-
+          it("Should return an error with status code 404", function(){
+            let gameID
+            return dummyClient.createGame()
+              .then(message => {
+                gameID = JSON.parse(message).data.Game_ID
+                return gameID
+            }).then(dummyClient.deleteGameWithID)
+              .then(() => {
+                return dummyClient.getGameWithID(gameID)
+            }).catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
         describe("Attempt to get valid gameID that is unused", function(){
-
+          it("Should return an error with status code 404", function(){
+            return dummyClient.getGameWithID(crypto.randomBytes(12).toString('hex'))
+            .catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
       })
 
       describe('PUT', function(){
         //Used to cache the game ids for deletion
+        let game_id
+        before(function(){
+          return dummyClient.createGame().then(message => {
+            game_id = JSON.parse(message).data.Game_ID
+          })
+        })
         describe("Attempt to place an invalid game board", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.replaceGameWithID(game_id, {"Game_Board":true})
+            .catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
         describe("Attempt to place a game with no game board", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.replaceGameWithID(game_id, {"Game_Board":null})
+            .catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
       })
       describe('DELETE', function(){
         describe("Attempt to delete an invalid game", function(){
-
+          it("Should return an error with status code 404", function(){
+            return dummyClient.deleteGameWithID(5).catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
-        describe("Attempt to delete a nonexistent game", function(){
-
+        describe("Attempt to delete a nonexistent, but valid game", function(){
+          it("Should return an error with status code 404", function(){
+            return dummyClient.deleteGameWithID(crypto.randomBytes(12).toString('hex')).catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
       })
     })
@@ -204,35 +246,62 @@ describe('Behavioral / Unit Test Suite', function(){
 
       describe('GET with query', function(){
         describe("Attempt to get edge from nonexistent board", function(){
-
+          it("Should return an error with status code 404", function(){
+            return dummyClient.checkEdge(5, 1,2,1,3).catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
         describe("Attempt to get nonexistent edge", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.checkEdge(game_id, 1,2,1,5).catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
         describe("Attempt to get edge with missing parameters", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.checkEdge(game_id, 1,2).catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
 
       })
       describe('POST', function(){
         describe("Attempt to place edge on invalid board", function(){
-
+          it("Should return an error with status code 404", function(){
+            return dummyClient.placeEdge(5, 1,2, 1,3, "R").catch(error => {
+              expect(error.statusCode).to.equal(404)
+            })
+          })
         })
         describe("Attempt to place on invalid edge", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.placeEdge(game_id, 1,2, 1,6, "R").catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
         describe("Attempt to place on edge with invalid color", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.placeEdge(game_id, 1,2, 1,6, "G").catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
         describe("Attempt to place edge with missing parameters", function(){
-
+          it("Should return an error with status code 400", function(){
+            return dummyClient.placeEdge(game_id, 1,2).catch(error => {
+              expect(error.statusCode).to.equal(400)
+            })
+          })
         })
-      })
-      //Cleanup environment
-      after(function(){
-        return dummyClient.deleteGameWithID(game_id)
+        //Cleanup environment
+        after(function(){
+          return dummyClient.deleteGameWithID(game_id)
+        })
       })
     })
   })
-})
 })

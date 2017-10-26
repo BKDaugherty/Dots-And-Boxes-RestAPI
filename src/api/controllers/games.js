@@ -45,7 +45,6 @@ const createGame = function(req, res){
       res.send(err)
     }
     else {
-
       //Return the game's id to the user
       if(LOG_MODE)
         console.log("Game Created with ID:" + GameCreated._id)
@@ -58,7 +57,7 @@ const createGame = function(req, res){
   })
 }
 
-//Gets the information on the game with the specified id
+//Gets the game board of the game with the specified id in url
 const getGameWithID = function(req, res){
   Games.findById(req.params.gameID, function(err, data){
     if(err) {
@@ -73,8 +72,7 @@ const getGameWithID = function(req, res){
       if(data === null){
         if(LOG_MODE)
           console.log("Invalid id: " + req.params.gameID)
-        res.send(err)
-        return
+        return res.status(404).json({code:404, error:"Resource does not exist"})
       }
 
       //Override Mongoose display of data for cleaner output

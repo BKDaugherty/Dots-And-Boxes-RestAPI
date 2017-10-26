@@ -3,7 +3,7 @@ const Games = require('../controllers/games.js');
 
 module.exports = function(app){
   app.route('/games')
-    .get(Games.getAllGames) //Returns the IDs of the games
+    .get(Games.getAllGames) //Returns the IDs of the games on the server
     .post(Games.createGame) //Requires Game Board Parameters
 
   app.route('/games/:gameID([0-9a-f]{24})')
@@ -13,5 +13,5 @@ module.exports = function(app){
 
   app.route('/games/:gameID([0-9a-f]{24})/board')
     .get(Games.getStatusOfEdge) //Check the status of a certain edge
-    .post(Games.placeEdge)
+    .post(Games.placeEdge) //Places an edge on the board as specified in post body
 }
