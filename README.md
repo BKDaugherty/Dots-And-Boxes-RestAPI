@@ -137,6 +137,13 @@ I did not have time to get to them. This also will act as a TODO list!
   Again, in this case our information does not really need to be secure; however, it
   would be a good idea to add some form of cryptography to our API, whether that be in
   the world of a JWT, or using a HTTPS/TLS connection.
+  * Helmet
+  For the ease of testing, and because of the given time constraint
+  I have chosen not to utilize a lot of security functionality.
+  However, one option that wouldn't be hard to add, would be the JavaScript package Helmet,
+  which works well with express. This would then protect the API from a lot of potential
+  HTTP attacks. If I were to push this applet to a production stage, I would at least use Helmet,
+  if not other security measures.
 * Continuous Integration
 Projects are better with continuous integration, and a fully functioning pipeline.
 With big projects, continuous integration is absolutely essential. As projects grow,
