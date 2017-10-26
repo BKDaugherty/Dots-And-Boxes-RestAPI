@@ -127,8 +127,15 @@ const deleteGameWithID = function(req, res){
 
 }
 
-//Get the status of the board at position boardX, boardY
+//Get the edge status at the edge specified in the query
 const getStatusOfEdge = function(req, res){
+
+  if(!util.validateInputCheckEdge(req.query.x1, req.query.x2, req.query.y1, req.query.y2, BOARD_SIZE)){
+    if(LOG_MODE)
+      console.log("Invalid input get status of edge")
+    return res.status(400).json({code:400, error:"Invalid input parameters"})
+  }
+
   return Games.findById(req.params.gameID).then(game => {
 
     const coordFrom = {
@@ -171,6 +178,13 @@ const getStatusOfEdge = function(req, res){
 
 //Places a dot at the board position specified on the game specified
 const placeEdge = function(req, res){
+  if(!util.validateInputPlaceEdge(req.body.x1, req.body.x2, req.body.y1, req.body.y2, req.body.color, BOARD_SIZE))
+    {
+      if(LOG_MODE)
+        console.log("Invalid input for place edge")
+      return res.status(400).json({code:400, error:"Invalid input parameters"})
+  }
+
   const coord1 = {x:req.body.x1, y:req.body.y1}
   const coord2 = {x:req.body.x2, y:req.body.y2}
   const color = req.body.color

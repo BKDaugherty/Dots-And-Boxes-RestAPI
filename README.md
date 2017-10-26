@@ -144,12 +144,12 @@ I did not have time to get to them. This also will act as a TODO list!
   which works well with express. This would then protect the API from a lot of potential
   HTTP attacks. If I were to push this applet to a production stage, I would at least use Helmet,
   if not other security measures.
+  * Sanitization
+  In this module, I have supplied some sanitization efforts of my own to ensure that a user
+  inputs the right kind of data. However, it might be a good idea to apply a more thorough
+  validator if this module goes to production!
 * Continuous Integration
 Projects are better with continuous integration, and a fully functioning pipeline.
 With big projects, continuous integration is absolutely essential. As projects grow,
 sometimes new features break old ones. Its important to realize this instantly in the
 development cycle, and solve the problem to avoid code regression.
-
-## TODO
-* Sanitize input
-* Negative Tests

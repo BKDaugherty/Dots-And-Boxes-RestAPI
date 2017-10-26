@@ -6,8 +6,6 @@ describe("Game Logic Testing", function(){
   describe("allocateGameBoard", function(){
     it("Allocates board with correct size", function(){
       const board = gameLogic.allocateGameBoard(4)
-
-      //9 squares!
       expect(board.length).to.equal(9)
     })
   })
@@ -22,13 +20,12 @@ describe("Game Logic Testing", function(){
   describe("Square Class", function(){
     it("Should allocate a square", function(){
       const square = new gameLogic.Square(1)
+      expect(square).to.be.ok
     })
     it("Should populate the square", function(){
       let square1 = new gameLogic.Square(1)
       square1.edgeRight = "HelloWorld"
-      console.log("RET value")
-      console.log(new gameLogic.Square().populateSquare(square1))
-      console.log("SQUARE VALUE")
+      expect(new gameLogic.Square().populateSquare(square1).edgeRight).to.equal("HelloWorld")
     })
   })
 

@@ -125,6 +125,7 @@ const getEdgeInSquareData = function(square, coord1, coord2){
 const addEdgeToSquare = function(square, coord1, coord2, color){
   let updatedSquare = new Square(square.num)
   const SD = getSquareDim(square)
+
   //Populate the updated square with the current squares data
   updatedSquare.populateSquare(square)
 
@@ -142,6 +143,12 @@ const addEdgeToSquare = function(square, coord1, coord2, color){
     } else if(coord1.y === SD.bottom){
       updatedSquare.edgeBottom = color
     }
+  }
+
+  //Report score to board
+  updatedSquare.taken += 1
+  if(updatedSquare.taken == 4){
+    updatedSquare.owner = color
   }
 
   return updatedSquare
