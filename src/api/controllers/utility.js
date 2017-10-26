@@ -32,9 +32,6 @@ const validateInputCheckEdge = function(x1, x2, y1, y2, BOARD_SIZE){
 
   const areNumbers = (typeof(x1) == "number") && (typeof(x2) == "number") && (typeof(y1) == "number") && (typeof(y2) == "number")
   const inRange = (boardCoordOutOfRange(x1, BOARD_SIZE) || boardCoordOutOfRange(x2, BOARD_SIZE) || boardCoordOutOfRange(y1, BOARD_SIZE) || boardCoordOutOfRange(y2, BOARD_SIZE))
-
-  console.log({areNumbers, inRange})
-
   return areNumbers && inRange
 }
 

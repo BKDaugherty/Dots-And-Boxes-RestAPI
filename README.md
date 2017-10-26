@@ -102,7 +102,7 @@ on port 7846. You can also specify the environment variable PORT to run it on a
 different port if 7846 is not to your fancy.
 
 ### Tests
-To run my tests, simply 'run npm run start & npm run test' from the root directory,
+To run my tests, simply run 'npm run start & npm run test' from the root directory,
 as the tests rely on the service being started. After the tests have run, a report
 will be generated in the reports directory. Open it with 'open ./reports/DotsAndBoxesTestReport.html'
 from the root directory!
