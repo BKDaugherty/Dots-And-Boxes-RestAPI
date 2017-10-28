@@ -1,6 +1,5 @@
 # Dots-And-Boxes-RestAPI
-A Rest API for the game Dots and Boxes. Built in NodeJS with Express and Mongoose for my Unity Code Test!
-
+A Rest API for the game Dots and Boxes. Built in NodeJS with Express and Mongoose!
 ## Introduction
 If you've never played a game of Dots and Boxes on the back of a menu with two broken crayons, you
 haven't lived. Thus, in the spirit of REST, I have built a REST API to do just that, without the inconvenience
